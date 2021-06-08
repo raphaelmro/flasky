@@ -1,3 +1,5 @@
+import os.path
+
 from flask import Flask, render_template, redirect, url_for, session, flash
 from flask_bootstrap import Bootstrap
 from flask_moment import Moment
@@ -5,11 +7,17 @@ from datetime import datetime
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField
 from wtforms.validators import DataRequired
+from flask_sqlalchemy import SQLAlchemy
 
+basedir = os.path.abspath(os.path.dirname(__file__))
 app = Flask(__name__)
+# set SQLAlchemy config
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'data.sqlite')
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 # set environment key
 app.config['SECRET_KEY'] = 'Z\x04_\\\xb4&\xabtT\xbb2('
 
+db = SQLAlchemy(app)
 bootstrap = Bootstrap(app)
 moment = Moment(app)
 
@@ -28,6 +36,7 @@ def index():
             flash('Looks like you have changed your name!')
         session['name'] = form.name.data
         return redirect(url_for('index'))
+    session['name'] = 'Stranger'
     return render_template('index.html', form=form, name=session.get('name'))
 
 
@@ -45,3 +54,7 @@ def page_not_found(e):
 @app.errorhandler(500)
 def internal_server_error(e):
     return render_template('500.html'), 500
+
+
+if __name__ == '__main__':
+    app.run(debug=True)

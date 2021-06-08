@@ -1,1 +1,5 @@
 Flask==2.0.0
+flask-bootstrap
+flask-moment
+flask-wtf
+flask-sqlalchemy
