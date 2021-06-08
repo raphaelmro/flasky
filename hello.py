@@ -39,7 +39,7 @@ class User(db.Model):
     role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
 
     def __repr__(self):
-        return f'<User ${self.username}>'
+        return f'<User {self.username}>'
 
 
 class NameForm(FlaskForm):
@@ -81,6 +81,11 @@ def page_not_found(e):
 @app.errorhandler(500)
 def internal_server_error(e):
     return render_template('500.html'), 500
+
+
+@app.shell_context_processor
+def make_shell_context():
+    return dict(db=db, User=User, Role=Role)
 
 
 if __name__ == '__main__':
